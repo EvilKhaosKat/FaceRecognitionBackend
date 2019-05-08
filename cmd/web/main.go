@@ -22,6 +22,7 @@ var timeoutCtx, _ = context.WithTimeout(context.Background(), 7*time.Second)
 func main() {
 	dsn := flag.String("dsn", "mongodb://localhost:27017", "MongoDB data source name")
 	addr := flag.String("addr", ":10080", "HTTP network address")
+	validAuthHeader := flag.String("validAuthHeader", "", "Valid auth header for mock auth logic")
 	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -35,9 +36,10 @@ func main() {
 	defer db.Disconnect(timeoutCtx)
 
 	app := &application{
-		errorLog: errorLog,
-		infoLog:  infoLog,
-		persons:  &mongodb.PersonModel{DB: db},
+		errorLog:        errorLog,
+		infoLog:         infoLog,
+		persons:         &mongodb.PersonModel{DB: db},
+		validAuthHeader: *validAuthHeader,
 	}
 
 	srv := &http.Server{
