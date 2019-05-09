@@ -1,13 +1,19 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"romangaranin.dev/FaceRecognitionBackend/pkg/models"
+	"time"
 )
 
-//Mock
+var httpClient = &http.Client{
+	Timeout: time.Second * 10,
+}
+
 func (app *application) mockGetPerson(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	_, err := fmt.Fprint(w,
@@ -64,4 +70,33 @@ func (app *application) getPersons(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) getPerson(w http.ResponseWriter, r *http.Request) {
 	//TODO implement
+}
+
+func (app *application) checkPerson(w http.ResponseWriter, r *http.Request) {
+	img, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	//TODO hardcoded value - at least add parametrization
+	response, err := httpClient.Post("http://localhost:8000", "image/jpeg", bytes.NewReader(img))
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	defer response.Body.Close()
+
+	responseBody, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	//TODO use encoding to check whether there is similar person
+	_, err = w.Write(responseBody)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 }

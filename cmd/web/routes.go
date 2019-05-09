@@ -9,6 +9,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/person/add", app.addPerson)
 	mux.HandleFunc("/person/get", app.getPerson)
 	mux.HandleFunc("/person/all", app.getPersons)
+	mux.HandleFunc("/person/check", app.checkPerson)
 	mux.HandleFunc("/testImage", app.mockGetPerson)
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
