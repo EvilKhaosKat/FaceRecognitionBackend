@@ -21,7 +21,7 @@ func (app *application) mockGetPerson(w http.ResponseWriter, r *http.Request) {
     }`)
 
 	if err != nil {
-		app.errorLog.Print(err)
+		app.errorLog.Println(err)
 	}
 }
 
