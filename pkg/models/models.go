@@ -13,8 +13,8 @@ var ErrNoRecord = errors.New("models: no matching record found")
 
 //Person
 type Person struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FirstName string `json:"first_name" bson:"firstName"`
+	LastName  string `json:"last_name" bson:"lastName"`
 	Email     string `json:"email"`
 	ID        string `json:"id"`
 	//TODO activations

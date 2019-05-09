@@ -11,7 +11,6 @@ func (app *application) authorization(next http.Handler, validAuthHeader string)
 		auth := r.Header.Get("Authorization")
 
 		if strings.EqualFold(auth, validAuthHeader) {
-			app.infoLog.Println("Authorized call: \n", r)
 			next.ServeHTTP(w, r)
 		} else {
 			app.errorLog.Printf("Not authorized call detected: Authorization:%s\nRequest:%v \n", auth, r)
@@ -25,3 +24,5 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+//TODO add global id per request

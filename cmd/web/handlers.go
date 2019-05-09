@@ -25,11 +25,7 @@ func (app *application) mockGetPerson(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *application) getPerson(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func (app *application) createPerson(w http.ResponseWriter, r *http.Request) {
+func (app *application) addPerson(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		w.Header().Set("Allow", "POST")
 		app.clientError(w, http.StatusMethodNotAllowed)
@@ -43,5 +39,29 @@ func (app *application) createPerson(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	app.infoLog.Println("POST person:", p)
+	app.infoLog.Printf("POST person:%+v \n", p)
+
+	_, err = app.persons.Update(p.ID, p.FirstName, p.LastName, p.Email)
+	if err != nil {
+		app.serverError(w, err)
+	}
+	app.infoLog.Println("Person added in db")
+}
+
+func (app *application) getPersons(w http.ResponseWriter, r *http.Request) {
+	persons, err := app.persons.GetAll()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(persons)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+}
+
+func (app *application) getPerson(w http.ResponseWriter, r *http.Request) {
+	//TODO implement
 }

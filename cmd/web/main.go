@@ -29,16 +29,16 @@ func main() {
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	infoLog.Println("Connecting to MongoDB")
-	db, err := mongodb.OpenDB(*dsn)
+	client, err := mongodb.OpenDB(*dsn)
 	if err != nil {
 		errorLog.Fatal(err)
 	}
-	defer db.Disconnect(timeoutCtx)
+	defer client.Disconnect(timeoutCtx)
 
 	app := &application{
 		errorLog:        errorLog,
 		infoLog:         infoLog,
-		persons:         &mongodb.PersonModel{DB: db},
+		persons:         mongodb.NewPersonModel(client),
 		validAuthHeader: *validAuthHeader,
 	}
 
