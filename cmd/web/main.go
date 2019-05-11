@@ -20,7 +20,7 @@ type application struct {
 var timeoutCtx, _ = context.WithTimeout(context.Background(), 7*time.Second)
 
 func main() {
-	dsn := flag.String("dsn", "mongodb://localhost:27017", "MongoDB data source name")
+	dsn := flag.String("dsn", "mongodb://mongo:27017", "MongoDB data source name")
 	addr := flag.String("addr", ":10080", "HTTP network address")
 	validAuthHeader := flag.String("validAuthHeader", "", "Valid auth header for mock auth logic")
 	flag.Parse()

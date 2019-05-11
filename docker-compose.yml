@@ -1,0 +1,14 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "10080:10080"
+    depends_on:
+      - mongo
+  mongo:
+    image: "mongo:latest"
+    volumes:
+      - ./db:/data/db
+    ports:
+      - "27017:27017"
