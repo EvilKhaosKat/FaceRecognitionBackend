@@ -1,6 +1,7 @@
 package services
 
 import (
+	"math"
 	"romangaranin.dev/FaceRecognitionBackend/pkg/models"
 	"romangaranin.dev/FaceRecognitionBackend/pkg/models/mongodb"
 )
@@ -19,6 +20,9 @@ func (e *EncodingChecker) FindSamePerson(encoding Encoding) (*models.Person, err
 		return nil, err
 	}
 
+	var closestPerson *models.Person
+	var closestDist = math.MaxFloat64
+
 	for _, person := range persons {
 		for _, rawEncoding := range person.RawEncodings {
 			personEncoding, err := NewEncoding(rawEncoding)
@@ -26,15 +30,15 @@ func (e *EncodingChecker) FindSamePerson(encoding Encoding) (*models.Person, err
 				return nil, err
 			}
 
-			samePerson, err := encoding.IsSame(personEncoding)
+			samePerson, dist, err := encoding.IsSame(personEncoding)
 			if err != nil {
 				return nil, err
 			}
-			if samePerson {
-				return person, nil
+			if samePerson && dist < closestDist {
+				closestPerson = person
 			}
 		}
 	}
 
-	return nil, nil
+	return closestPerson, nil
 }
