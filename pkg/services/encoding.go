@@ -13,7 +13,7 @@ type Encoding []float64
 
 //TODO custom errors?
 
-const similarityMaxThreshold = 0.7
+const similarityMaxThreshold = 0.6
 
 func NewEncoding(encoding string) (Encoding, error) {
 	encodingStringLen := utf8.RuneCountInString(encoding)
@@ -71,5 +71,6 @@ func (e Encoding) IsSame(otherEncoding Encoding) (bool, error) {
 		return false, err
 	}
 
+	fmt.Println("dist = ", dist)
 	return dist < similarityMaxThreshold, nil
 }
