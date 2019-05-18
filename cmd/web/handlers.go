@@ -137,6 +137,39 @@ func (app *application) checkPerson(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (app *application) deletePerson(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	personId := r.FormValue("id")
+	person, err := app.persons.Get(personId)
+	if err != nil {
+		app.errorLog.Println(err)
+		app.notFound(w)
+		return
+	}
+
+	if person == nil {
+		app.notFound(w)
+		return
+	}
+
+	removedCount, err := app.persons.Remove(person.ID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	_, err = fmt.Fprintf(w, "Removed:%d", removedCount)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+}
+
 func (app *application) addImageToPerson(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(5 * 1024 * 1025)
 	if err != nil {
@@ -164,13 +197,13 @@ func (app *application) addImageToPerson(w http.ResponseWriter, r *http.Request)
 	}
 	defer img.Close()
 
-	buf := bytes.NewBuffer(nil)
-	if _, err := io.Copy(buf, img); err != nil {
+	imgBuf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(imgBuf, img); err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	encoding, err := app.getImageRawEncoding(buf)
+	encoding, err := app.getImageRawEncoding(imgBuf)
 	if err != nil {
 		app.serverError(w, err)
 		return

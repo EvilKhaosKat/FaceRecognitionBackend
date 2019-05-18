@@ -91,6 +91,17 @@ func (m *PersonModel) Get(id string) (*models.Person, error) {
 	return person, nil
 }
 
+func (m *PersonModel) Remove(id string) (int64, error) {
+	if utf8.RuneCountInString(id) == 0 {
+		return 0, nil
+	}
+
+	persons := m.getPersonsCollection()
+
+	result, err := persons.DeleteOne(ctx, bson.M{"id": id})
+	return result.DeletedCount, err
+}
+
 // This will return all the created persons.
 func (m *PersonModel) GetAll() ([]*models.Person, error) {
 	var result []*models.Person
