@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"romangaranin.dev/FaceRecognitionBackend/pkg/models"
+	"unicode/utf8"
 )
 
 const (
@@ -46,7 +47,7 @@ func (m *PersonModel) getPersonsCollection() *mongo.Collection {
 }
 
 // This will insert a new person into the database or updates existing.
-func (m *PersonModel) Update(id, firstName, lastName, email string, rawActivations []string) (string, error) {
+func (m *PersonModel) Update(id, firstName, lastName, email string, rawEncodings []string) (string, error) {
 	persons := m.getPersonsCollection()
 
 	upsert := true
@@ -54,11 +55,11 @@ func (m *PersonModel) Update(id, firstName, lastName, email string, rawActivatio
 		bson.M{"id": id},
 		bson.M{
 			"$set": bson.M{
-				"id":          id,
-				"firstName":   firstName,
-				"lastName":    lastName,
-				"email":       email,
-				"activations": rawActivations},
+				"id":        id,
+				"firstName": firstName,
+				"lastName":  lastName,
+				"email":     email,
+				"encodings": rawEncodings},
 		},
 		&options.UpdateOptions{
 			Upsert: &upsert,
@@ -73,8 +74,21 @@ func (m *PersonModel) Update(id, firstName, lastName, email string, rawActivatio
 
 // This will return a specific person based on its id.
 func (m *PersonModel) Get(id string) (*models.Person, error) {
-	//TODO impl
-	return nil, nil
+	if utf8.RuneCountInString(id) == 0 {
+		return nil, nil
+	}
+
+	persons := m.getPersonsCollection()
+
+	result := persons.FindOne(ctx, bson.M{"id": id})
+
+	var person *models.Person
+	err := result.Decode(&person)
+	if err != nil {
+		return nil, err
+	}
+
+	return person, nil
 }
 
 // This will return all the created persons.

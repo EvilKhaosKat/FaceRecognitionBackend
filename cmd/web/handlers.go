@@ -4,9 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"romangaranin.dev/FaceRecognitionBackend/pkg/models"
+	"romangaranin.dev/FaceRecognitionBackend/pkg/services"
 	"time"
 )
 
@@ -47,7 +50,7 @@ func (app *application) addPerson(w http.ResponseWriter, r *http.Request) {
 
 	app.infoLog.Printf("POST person:%+v \n", p)
 
-	_, err = app.persons.Update(p.ID, p.FirstName, p.LastName, p.Email, p.RawActivations)
+	_, err = app.persons.Update(p.ID, p.FirstName, p.LastName, p.Email, p.RawEncodings)
 	if err != nil {
 		app.serverError(w, err)
 	}
@@ -83,29 +86,101 @@ func (app *application) getPerson(w http.ResponseWriter, r *http.Request) {
 	//}
 }
 
+func (app *application) getImageRawEncoding(img io.Reader) (services.Encoding, error) {
+	response, err := httpClient.Post(app.mlEndpoint, "image/jpeg", img)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	responseBody, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	encoding, err := services.NewEncoding(string(responseBody))
+	if err != nil {
+		return nil, err
+	}
+
+	return encoding, nil
+}
+
 func (app *application) checkPerson(w http.ResponseWriter, r *http.Request) {
+	app.infoLog.Println("Check person called")
 	img, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	//TODO hardcoded value - at least add parametrization
-	response, err := httpClient.Post("http://localhost:8000", "image/jpeg", bytes.NewReader(img))
+	encoding, err := app.getImageRawEncoding(bytes.NewReader(img))
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
-	defer response.Body.Close()
+	app.infoLog.Println("ML response obtained")
 
-	responseBody, err := ioutil.ReadAll(response.Body)
+	foundPerson, err := app.encodingChecker.FindSamePerson(encoding)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	if foundPerson != nil {
+		err = json.NewEncoder(w).Encode(foundPerson)
+	} else {
+		_, err = fmt.Fprint(w, "{}")
+	}
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+}
+
+func (app *application) addImageToPerson(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseMultipartForm(5 * 1024 * 1025)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	personId := r.FormValue("id")
+	person, err := app.persons.Get(personId)
+	if err != nil {
+		app.errorLog.Println(err)
+		app.notFound(w)
+		return
+	}
+
+	if person == nil {
+		app.notFound(w)
+		return
+	}
+
+	img, _, err := r.FormFile("image")
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	defer img.Close()
+
+	buf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, img); err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	encoding, err := app.getImageRawEncoding(buf)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	//TODO use encoding to check whether there is similar person
-	_, err = w.Write(responseBody)
+	//TODO get rid of that 'raw encoding' form
+	rawEncodingForm := "[" + fmt.Sprint(encoding) + "]"
+
+	person.RawEncodings = append(person.RawEncodings, rawEncodingForm)
+	_, err = app.persons.Update(person.ID, person.FirstName, person.LastName, person.Email, person.RawEncodings)
 	if err != nil {
 		app.serverError(w, err)
 		return

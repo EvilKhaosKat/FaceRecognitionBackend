@@ -7,6 +7,7 @@ import (
 func (app *application) routes() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/person/add", app.addPerson)
+	mux.HandleFunc("/person/addImage", app.addImageToPerson)
 	mux.HandleFunc("/person/get", app.getPerson)
 	mux.HandleFunc("/person/all", app.getPersons)
 	mux.HandleFunc("/person/check", app.checkPerson)

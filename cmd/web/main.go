@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"romangaranin.dev/FaceRecognitionBackend/pkg/models/mongodb"
+	"romangaranin.dev/FaceRecognitionBackend/pkg/services"
 	"time"
 )
 
@@ -14,13 +15,16 @@ type application struct {
 	errorLog        *log.Logger
 	infoLog         *log.Logger
 	persons         *mongodb.PersonModel
-	validAuthHeader string
+	encodingChecker *services.EncodingChecker
+	validAuthHeader string //TODO move to separate config struct
+	mlEndpoint      string
 }
 
 var timeoutCtx, _ = context.WithTimeout(context.Background(), 7*time.Second)
 
 func main() {
-	dsn := flag.String("dsn", "mongodb://mongo:27017", "MongoDB data source name")
+	dsn := flag.String("dsn", "mongodb://localhost:27017", "MongoDB data source name")
+	mlEndpoint := flag.String("mlEndpoint", "http://localhost:8000", "Machine learning model endpoint")
 	addr := flag.String("addr", ":10080", "HTTP network address")
 	validAuthHeader := flag.String("validAuthHeader", "", "Valid auth header for mock auth logic")
 	flag.Parse()
@@ -35,11 +39,16 @@ func main() {
 	}
 	defer client.Disconnect(timeoutCtx)
 
+	personModel := mongodb.NewPersonModel(client)
+	encodingChecker := services.NewEncodingChecker(personModel)
+
 	app := &application{
 		errorLog:        errorLog,
 		infoLog:         infoLog,
-		persons:         mongodb.NewPersonModel(client),
+		persons:         personModel,
+		encodingChecker: encodingChecker,
 		validAuthHeader: *validAuthHeader,
+		mlEndpoint:      *mlEndpoint,
 	}
 
 	srv := &http.Server{

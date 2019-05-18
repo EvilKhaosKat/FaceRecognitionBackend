@@ -11,6 +11,6 @@ COPY --from=builder /go/FaceRecognitionBackend/web /srv/web
 RUN \
     chown -R app:app /srv && \
     chmod +x /srv/web
-CMD ["/srv/web"]
+CMD ["/srv/web -dsn=mongodb://mongo:27017"]
 
 EXPOSE 10080
