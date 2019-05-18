@@ -46,14 +46,19 @@ func (m *PersonModel) getPersonsCollection() *mongo.Collection {
 }
 
 // This will insert a new person into the database or updates existing.
-func (m *PersonModel) Update(id, firstName, lastName, email string) (string, error) {
+func (m *PersonModel) Update(id, firstName, lastName, email string, rawActivations []string) (string, error) {
 	persons := m.getPersonsCollection()
 
 	upsert := true
 	result, err := persons.UpdateOne(ctx,
 		bson.M{"id": id},
 		bson.M{
-			"$set": bson.M{"id": id, "firstName": firstName, "lastName": lastName, "email": email},
+			"$set": bson.M{
+				"id":          id,
+				"firstName":   firstName,
+				"lastName":    lastName,
+				"email":       email,
+				"activations": rawActivations},
 		},
 		&options.UpdateOptions{
 			Upsert: &upsert,
@@ -67,7 +72,8 @@ func (m *PersonModel) Update(id, firstName, lastName, email string) (string, err
 }
 
 // This will return a specific person based on its id.
-func (m *PersonModel) Get(id int) (*models.Person, error) {
+func (m *PersonModel) Get(id string) (*models.Person, error) {
+	//TODO impl
 	return nil, nil
 }
 

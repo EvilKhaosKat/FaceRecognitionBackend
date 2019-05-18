@@ -47,7 +47,7 @@ func (app *application) addPerson(w http.ResponseWriter, r *http.Request) {
 
 	app.infoLog.Printf("POST person:%+v \n", p)
 
-	_, err = app.persons.Update(p.ID, p.FirstName, p.LastName, p.Email)
+	_, err = app.persons.Update(p.ID, p.FirstName, p.LastName, p.Email, p.RawActivations)
 	if err != nil {
 		app.serverError(w, err)
 	}
@@ -69,7 +69,18 @@ func (app *application) getPersons(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) getPerson(w http.ResponseWriter, r *http.Request) {
-	//TODO implement
+	err := r.ParseForm()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	//TODO impl
+	//rawId := r.FormValue("id")
+	//person, err := app.persons.Get(rawId)
+	//if err != nil {
+	//
+	//}
 }
 
 func (app *application) checkPerson(w http.ResponseWriter, r *http.Request) {
