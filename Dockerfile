@@ -1,6 +1,9 @@
 FROM umputun/baseimage:buildgo-latest as builder
 #FROM golang:1.12 as builder
 WORKDIR /go/FaceRecognitionBackend
+COPY go.mod go.sum ./
+RUN go mod download
+
 COPY . /go/FaceRecognitionBackend
 RUN go build ./cmd/web
 
