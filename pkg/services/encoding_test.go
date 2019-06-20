@@ -77,7 +77,7 @@ func TestIsSame(t *testing.T) {
 	first, _ := NewEncoding(getFirstEncodingString())
 	second, _ := NewEncoding(getSecondEncodingString())
 
-	isSame, err := first.IsSame(second)
+	isSame, _, err := first.IsSame(second)
 
 	if err != nil {
 		t.Fatal("want nil; got", err)

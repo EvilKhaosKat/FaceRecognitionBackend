@@ -3,11 +3,11 @@ package mongodb
 import (
 	"context"
 	"fmt"
+	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"romangaranin.dev/FaceRecognitionBackend/pkg/models"
 	"unicode/utf8"
 )
 

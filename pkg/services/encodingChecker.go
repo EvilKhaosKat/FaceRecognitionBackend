@@ -1,9 +1,9 @@
 package services
 
 import (
+	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/models"
+	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/models/mongodb"
 	"math"
-	"romangaranin.dev/FaceRecognitionBackend/pkg/models"
-	"romangaranin.dev/FaceRecognitionBackend/pkg/models/mongodb"
 )
 
 type EncodingChecker struct {

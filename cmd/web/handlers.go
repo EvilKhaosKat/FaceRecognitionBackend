@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/models"
+	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/services"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"romangaranin.dev/FaceRecognitionBackend/pkg/models"
-	"romangaranin.dev/FaceRecognitionBackend/pkg/services"
 	"time"
 )
 

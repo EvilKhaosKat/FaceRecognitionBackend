@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/models/mongodb"
+	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/services"
 	"log"
 	"net/http"
 	"os"
-	"romangaranin.dev/FaceRecognitionBackend/pkg/models/mongodb"
-	"romangaranin.dev/FaceRecognitionBackend/pkg/services"
 	"time"
 )
 
