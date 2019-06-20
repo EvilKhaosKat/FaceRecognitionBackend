@@ -6,11 +6,11 @@ import (
 )
 
 //TODO implement real one
-func (app *application) authorization(next http.Handler, validAuthHeader string) http.Handler {
+func (app *application) authorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		auth := r.Header.Get("Authorization")
 
-		if strings.EqualFold(auth, validAuthHeader) {
+		if strings.EqualFold(auth, app.validAuthHeader) {
 			next.ServeHTTP(w, r)
 		} else {
 			app.errorLog.Printf("Not authorized call detected: Authorization:%s\nRequest:%v \n", auth, r)

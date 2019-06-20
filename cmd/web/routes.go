@@ -18,5 +18,5 @@ func (app *application) routes() http.Handler {
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	//TODO use alice middleware?
-	return app.logRequest(app.authorization(mux, app.validAuthHeader))
+	return app.logRequest(app.authorization(mux))
 }
