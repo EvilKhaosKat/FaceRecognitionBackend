@@ -72,6 +72,5 @@ func (e Encoding) IsSame(otherEncoding Encoding) (bool, float64, error) {
 		return false, -1, err
 	}
 
-	fmt.Println("dist = ", dist)
 	return dist < similarityMaxThreshold, dist, nil
 }
