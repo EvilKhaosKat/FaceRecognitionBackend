@@ -4,13 +4,6 @@ import "errors"
 
 var ErrNoRecord = errors.New("models: no matching record found")
 
-//        "first_name": "John",
-//        "last_name": "Doe",
-//        "email": "john.doe@gmail.com",
-//        "id": "john.doe",
-//        "activations": [0.09, 0.93, 0.777],
-//        "confidence": 0.9
-
 //Person
 type Person struct {
 	FirstName string   `json:"first_name" bson:"firstName"`
@@ -19,4 +12,13 @@ type Person struct {
 	ID        string   `json:"id" bson:"id"`
 	Encodings []string `json:"encodings" bson:"encodings"`
 	//TODO images
+	//TODO confidence level?
+}
+
+//PersonModel defines model/DAO methods for Person
+type PersonModel interface {
+	Update(id, firstName, lastName, email string, rawEncodings []string) (string, error)
+	Get(id string) (*Person, error)
+	Remove(id string) (int64, error)
+	GetAll() ([]*Person, error)
 }

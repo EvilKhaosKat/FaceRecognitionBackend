@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/models"
 	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/models/mongodb"
 	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/services"
 	"log"
@@ -14,7 +15,7 @@ import (
 type application struct {
 	errorLog           *log.Logger
 	infoLog            *log.Logger
-	persons            *mongodb.PersonModel
+	persons            models.PersonModel
 	encodingComparator *services.EncodingComparator
 	validAuthHeader    string //TODO move to separate config struct
 	mlEndpoint         string
