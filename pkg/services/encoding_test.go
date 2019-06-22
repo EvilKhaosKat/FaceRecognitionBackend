@@ -6,7 +6,7 @@ import (
 )
 
 func TestNewEncoding(t *testing.T) {
-	encodingStr := "[[-0.02517794  0.12061624  0.04272895 -0.0952117  -0.00082525  0.09786011]]"
+	encodingStr := "-0.02517794  0.12061624  0.04272895 -0.0952117  -0.00082525  0.09786011"
 
 	encoding, err := NewEncoding(encodingStr)
 
@@ -15,11 +15,11 @@ func TestNewEncoding(t *testing.T) {
 	}
 
 	if err != nil {
-		t.Error("want nil, got", err)
+		t.Fatal("want nil, got", err)
 	}
 
 	if len(encoding) != 6 {
-		t.Error("want 6; got", len(encoding))
+		t.Fatal("want 6; got", len(encoding))
 	}
 
 	//lets assume that's enough for sanity check
@@ -27,12 +27,12 @@ func TestNewEncoding(t *testing.T) {
 	firstNumTest := big.NewFloat(-0.02517794)
 
 	if firstNum.Cmp(firstNumTest) != 0 {
-		t.Errorf("want %f; got %f", firstNumTest, firstNum)
+		t.Fatalf("want %f; got %f", firstNumTest, firstNum)
 	}
 }
 
 func TestNewEncodingShortData(t *testing.T) {
-	encodingStr := "[[short input]]"
+	encodingStr := "short input"
 
 	encoding, err := NewEncoding(encodingStr)
 
@@ -46,7 +46,7 @@ func TestNewEncodingShortData(t *testing.T) {
 }
 
 func TestNewEncodingNotNumber(t *testing.T) {
-	encodingStr := "[[-0.02517794  0.12061624  0.04272895 -0.0952117  -0.00082525  0.09786011 NOT_NUMBER_AT_ALL]]"
+	encodingStr := "-0.02517794  0.12061624  0.04272895 -0.0952117  -0.00082525  0.09786011 NOT_NUMBER_AT_ALL"
 
 	encoding, err := NewEncoding(encodingStr)
 
@@ -89,7 +89,7 @@ func TestIsSame(t *testing.T) {
 }
 
 func getFirstEncodingString() string {
-	return `[[-0.02517794  0.12061624  0.04272895 -0.0952117  -0.00082525
+	return `-0.02517794  0.12061624  0.04272895 -0.0952117  -0.00082525
    0.11663063  0.10064542 -0.12526244  0.05244305  0.09572414  0.13917078
    0.04654023 -0.07373067  0.0774107   0.08275025 -0.00226332  0.11106832
   -0.16339034  0.08947118 -0.06504941  0.05461143  0.06309925 -0.04119856
@@ -98,11 +98,11 @@ func getFirstEncodingString() string {
   -0.1676044   0.05428734  0.20914543  0.0087307  -0.02346108  0.10011243
    0.12281854 -0.02066345  0.08955534  0.12052457 -0.0492502  -0.05357183
   -0.11322106 -0.04778777 -0.14879316  0.09299239 -0.06210891 -0.0606531
-   0.04096187 -0.07158172]]`
+   0.04096187 -0.07158172`
 }
 
 func getSecondEncodingString() string {
-	return `[[-0.04781156  0.13086452  0.06519756 -0.06235839  0.01312022
+	return `-0.04781156  0.13086452  0.06519756 -0.06235839  0.01312022
    0.00484892  0.06017131 -0.07756685 -0.01801117  0.07118477  0.12083602
    0.15290402  0.03152245  0.01988193  0.10849094  0.0032022   0.11602321
   -0.16587712  0.03919415 -0.12275632 -0.04176315  0.14333847 -0.04478907
@@ -111,5 +111,5 @@ func getSecondEncodingString() string {
   -0.14662246  0.04413157  0.20206797  0.03183846 -0.03969065 -0.07047424
    0.13661303 -0.06639413  0.1545957   0.11782251 -0.07934082 -0.01013817
   -0.13595062  0.03486867 -0.10575092  0.1386303  -0.07088415 -0.01846558
-  -0.02831654 -0.09127404]]`
+  -0.02831654 -0.09127404`
 }

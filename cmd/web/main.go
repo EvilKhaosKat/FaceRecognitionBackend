@@ -12,12 +12,12 @@ import (
 )
 
 type application struct {
-	errorLog        *log.Logger
-	infoLog         *log.Logger
-	persons         *mongodb.PersonModel
-	encodingChecker *services.EncodingChecker
-	validAuthHeader string //TODO move to separate config struct
-	mlEndpoint      string
+	errorLog           *log.Logger
+	infoLog            *log.Logger
+	persons            *mongodb.PersonModel
+	encodingComparator *services.EncodingComparator
+	validAuthHeader    string //TODO move to separate config struct
+	mlEndpoint         string
 }
 
 var timeoutCtx, _ = context.WithTimeout(context.Background(), 7*time.Second)
@@ -40,15 +40,15 @@ func main() {
 	defer client.Disconnect(timeoutCtx)
 
 	personModel := mongodb.NewPersonModel(client)
-	encodingChecker := services.NewEncodingChecker(personModel)
+	encodingComparator := services.NewEncodingComparator(personModel)
 
 	app := &application{
-		errorLog:        errorLog,
-		infoLog:         infoLog,
-		persons:         personModel,
-		encodingChecker: encodingChecker,
-		validAuthHeader: *validAuthHeader,
-		mlEndpoint:      *mlEndpoint,
+		errorLog:           errorLog,
+		infoLog:            infoLog,
+		persons:            personModel,
+		encodingComparator: encodingComparator,
+		validAuthHeader:    *validAuthHeader,
+		mlEndpoint:         *mlEndpoint,
 	}
 
 	srv := &http.Server{

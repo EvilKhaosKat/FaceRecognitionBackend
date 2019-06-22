@@ -39,3 +39,14 @@ func TestMockGetPerson(t *testing.T) {
 		t.Errorf("want body contains json with email %q", mockEmail)
 	}
 }
+
+func TestGetEncodingStringByMlResponse(t *testing.T) {
+	response := []byte("[[1 2 3]]")
+
+	encodingString := getEncodingStringByMlResponse(response)
+
+	const correctEncodingString = "1 2 3"
+	if encodingString != correctEncodingString {
+		t.Errorf("want '%q', got %q", correctEncodingString, encodingString)
+	}
+}

@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"time"
+	"unicode/utf8"
 )
 
 var httpClient = &http.Client{
@@ -50,7 +51,7 @@ func (app *application) addPerson(w http.ResponseWriter, r *http.Request) {
 
 	app.infoLog.Printf("POST person:%+v \n", p)
 
-	_, err = app.persons.Update(p.ID, p.FirstName, p.LastName, p.Email, p.RawEncodings)
+	_, err = app.persons.Update(p.ID, p.FirstName, p.LastName, p.Email, p.Encodings)
 	if err != nil {
 		app.serverError(w, err)
 	}
@@ -86,7 +87,7 @@ func (app *application) getPerson(w http.ResponseWriter, r *http.Request) {
 	//}
 }
 
-func (app *application) getImageRawEncoding(img io.Reader) (services.Encoding, error) {
+func (app *application) getImageEncoding(img io.Reader) (services.Encoding, error) {
 	response, err := httpClient.Post(app.mlEndpoint, "image/jpeg", img)
 	if err != nil {
 		return nil, err
@@ -98,12 +99,20 @@ func (app *application) getImageRawEncoding(img io.Reader) (services.Encoding, e
 		return nil, err
 	}
 
-	encoding, err := services.NewEncoding(string(responseBody))
+	encoding, err := services.NewEncoding(getEncodingStringByMlResponse(responseBody))
 	if err != nil {
 		return nil, err
 	}
 
 	return encoding, nil
+}
+
+//getEncodingStringByMlResponse transforms encoding string
+//from format '[[num num num ...]]' to 'num num num ...'
+func getEncodingStringByMlResponse(response []byte) string {
+	rawEncodingString := string(response) //[[1 2 3]]
+	stringLen := utf8.RuneCountInString(rawEncodingString)
+	return rawEncodingString[2 : stringLen-2]
 }
 
 func (app *application) checkPerson(w http.ResponseWriter, r *http.Request) {
@@ -114,14 +123,14 @@ func (app *application) checkPerson(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	encoding, err := app.getImageRawEncoding(bytes.NewReader(img))
+	encoding, err := app.getImageEncoding(bytes.NewReader(img))
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 	app.infoLog.Println("ML response obtained")
 
-	foundPerson, err := app.encodingChecker.FindSamePerson(encoding)
+	foundPerson, err := app.encodingComparator.FindSamePerson(encoding)
 	if err != nil {
 		app.serverError(w, err)
 	}
@@ -203,17 +212,14 @@ func (app *application) addImageToPerson(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	encoding, err := app.getImageRawEncoding(imgBuf)
+	encoding, err := app.getImageEncoding(imgBuf)
 	if err != nil {
 		app.serverError(w, err)
 		return
 	}
 
-	//TODO get rid of that 'raw encoding' form
-	rawEncodingForm := "[" + fmt.Sprint(encoding) + "]"
-
-	person.RawEncodings = append(person.RawEncodings, rawEncodingForm)
-	_, err = app.persons.Update(person.ID, person.FirstName, person.LastName, person.Email, person.RawEncodings)
+	person.Encodings = append(person.Encodings, encoding.String())
+	_, err = app.persons.Update(person.ID, person.FirstName, person.LastName, person.Email, person.Encodings)
 	if err != nil {
 		app.serverError(w, err)
 		return

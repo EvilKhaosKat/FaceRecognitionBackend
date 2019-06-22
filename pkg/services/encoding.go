@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"math"
@@ -14,15 +15,16 @@ type Encoding []float64
 //TODO custom errors?
 
 const similarityMaxThreshold = 0.64
+const encodingMinlength = 42
 
 func NewEncoding(encoding string) (Encoding, error) {
 	encodingStringLen := utf8.RuneCountInString(encoding)
 
-	if encodingStringLen < 42 { //usually encoding is 128 float numbers, so it's pretty long in text form
+	if encodingStringLen < encodingMinlength { //usually encoding is 128 float numbers, so it's pretty long in text form
 		return nil, errors.New(fmt.Sprint("too short encoding, probably incorrect data:", encoding))
 	}
 
-	numbers := strings.Split(encoding[2:encodingStringLen-2], " ")
+	numbers := strings.Split(encoding, " ")
 
 	var result Encoding
 
@@ -73,4 +75,14 @@ func (e Encoding) IsSame(otherEncoding Encoding) (bool, float64, error) {
 	}
 
 	return dist < similarityMaxThreshold, dist, nil
+}
+
+func (e Encoding) String() string {
+	var buffer bytes.Buffer
+
+	for _, num := range e {
+		buffer.WriteString(fmt.Sprintf("%f", num))
+	}
+
+	return buffer.String()
 }

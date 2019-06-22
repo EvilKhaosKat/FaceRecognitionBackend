@@ -6,15 +6,15 @@ import (
 	"math"
 )
 
-type EncodingChecker struct {
+type EncodingComparator struct {
 	persons *mongodb.PersonModel
 }
 
-func NewEncodingChecker(persons *mongodb.PersonModel) *EncodingChecker {
-	return &EncodingChecker{persons: persons}
+func NewEncodingComparator(persons *mongodb.PersonModel) *EncodingComparator {
+	return &EncodingComparator{persons: persons}
 }
 
-func (e *EncodingChecker) FindSamePerson(encoding Encoding) (*models.Person, error) {
+func (e *EncodingComparator) FindSamePerson(encoding Encoding) (*models.Person, error) {
 	persons, err := e.persons.GetAll()
 	if err != nil {
 		return nil, err
@@ -24,8 +24,8 @@ func (e *EncodingChecker) FindSamePerson(encoding Encoding) (*models.Person, err
 	var closestDist = math.MaxFloat64
 
 	for _, person := range persons {
-		for _, rawEncoding := range person.RawEncodings {
-			personEncoding, err := NewEncoding(rawEncoding)
+		for _, encodingStr := range person.Encodings {
+			personEncoding, err := NewEncoding(encodingStr)
 			if err != nil {
 				return nil, err
 			}
