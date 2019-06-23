@@ -2,7 +2,8 @@ package mock
 
 import "github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/models"
 
-var mockPerson = &models.Person{
+//Person used in mock model
+var Person = &models.Person{
 	FirstName: "First",
 	LastName:  "Name",
 	Email:     "email@email.com",
@@ -16,11 +17,11 @@ type PersonsModel struct {
 func (*PersonsModel) Update(id, firstName, lastName, email string, encodings []string) (string, error) {
 	switch id {
 	case "1":
-		mockPerson.ID = id
-		mockPerson.FirstName = firstName
-		mockPerson.LastName = lastName
-		mockPerson.Email = email
-		mockPerson.Encodings = encodings
+		Person.ID = id
+		Person.FirstName = firstName
+		Person.LastName = lastName
+		Person.Email = email
+		Person.Encodings = encodings
 
 		return id, nil
 	default:
@@ -31,7 +32,7 @@ func (*PersonsModel) Update(id, firstName, lastName, email string, encodings []s
 func (*PersonsModel) Get(id string) (*models.Person, error) {
 	switch id {
 	case "1":
-		return mockPerson, nil
+		return Person, nil
 	default:
 		return nil, models.ErrNoRecord
 	}
@@ -42,5 +43,5 @@ func (*PersonsModel) Remove(id string) (int64, error) {
 }
 
 func (*PersonsModel) GetAll() ([]*models.Person, error) {
-	return []*models.Person{mockPerson}, nil
+	return []*models.Person{Person}, nil
 }
