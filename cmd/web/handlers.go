@@ -79,12 +79,18 @@ func (app *application) getPerson(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//TODO impl
-	//rawId := r.FormValue("id")
-	//person, err := app.persons.Get(rawId)
-	//if err != nil {
-	//
-	//}
+	rawId := r.FormValue("id")
+	person, err := app.persons.Get(rawId)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(person)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 }
 
 func (app *application) getImageEncoding(img io.Reader) (services.Encoding, error) {
