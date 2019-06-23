@@ -2,15 +2,14 @@ package services
 
 import (
 	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/models"
-	"github.com/EvilKhaosKat/FaceRecognitionBackend/pkg/models/mongodb"
 	"math"
 )
 
 type EncodingComparator struct {
-	persons *mongodb.PersonModel
+	persons models.PersonModel
 }
 
-func NewEncodingComparator(persons *mongodb.PersonModel) *EncodingComparator {
+func NewEncodingComparator(persons models.PersonModel) *EncodingComparator {
 	return &EncodingComparator{persons: persons}
 }
 

@@ -2,7 +2,6 @@ package main
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -12,15 +11,13 @@ import (
 const mockEmail = "john.doe@gmail.com"
 
 func TestMockGetPerson(t *testing.T) {
-	app := &application{
-		errorLog: log.New(ioutil.Discard, "", 0),
-		infoLog:  log.New(ioutil.Discard, "", 0),
-	}
+	app := newTestApplication(t)
 
 	ts := httptest.NewServer(app.routes())
 	defer ts.Close()
 
-	rs, err := ts.Client().Get(ts.URL + "/testImage")
+	r := newGetRequest(t, ts.URL+"/testImage", app.validAuthHeader)
+	rs, err := ts.Client().Do(r)
 	if err != nil {
 		t.Fatal(err)
 	}

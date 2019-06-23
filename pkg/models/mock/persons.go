@@ -7,14 +7,25 @@ var mockPerson = &models.Person{
 	LastName:  "Name",
 	Email:     "email@email.com",
 	ID:        "1",
-	Encodings: nil,
+	Encodings: []string{"1 2 3"},
 }
 
 type PersonsModel struct {
 }
 
-func (*PersonsModel) Update(id, firstName, lastName, email string, rawEncodings []string) (string, error) {
-	panic("implement me")
+func (*PersonsModel) Update(id, firstName, lastName, email string, encodings []string) (string, error) {
+	switch id {
+	case "1":
+		mockPerson.ID = id
+		mockPerson.FirstName = firstName
+		mockPerson.LastName = lastName
+		mockPerson.Email = email
+		mockPerson.Encodings = encodings
+
+		return id, nil
+	default:
+		return "", models.ErrDbProblem
+	}
 }
 
 func (*PersonsModel) Get(id string) (*models.Person, error) {
@@ -27,9 +38,9 @@ func (*PersonsModel) Get(id string) (*models.Person, error) {
 }
 
 func (*PersonsModel) Remove(id string) (int64, error) {
-	panic("implement me")
+	return 0, nil
 }
 
 func (*PersonsModel) GetAll() ([]*models.Person, error) {
-	panic("implement me")
+	return []*models.Person{mockPerson}, nil
 }

@@ -3,6 +3,7 @@ package models
 import "errors"
 
 var ErrNoRecord = errors.New("models: no matching record found")
+var ErrDbProblem = errors.New("models: problem with db")
 
 //Person
 type Person struct {
@@ -17,7 +18,7 @@ type Person struct {
 
 //PersonModel defines model/DAO methods for Person
 type PersonModel interface {
-	Update(id, firstName, lastName, email string, rawEncodings []string) (string, error)
+	Update(id, firstName, lastName, email string, encodings []string) (string, error)
 	Get(id string) (*Person, error)
 	Remove(id string) (int64, error)
 	GetAll() ([]*Person, error)

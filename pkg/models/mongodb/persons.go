@@ -47,7 +47,7 @@ func (m *PersonModel) getPersonsCollection() *mongo.Collection {
 }
 
 // This will insert a new person into the database or updates existing.
-func (m *PersonModel) Update(id, firstName, lastName, email string, rawEncodings []string) (string, error) {
+func (m *PersonModel) Update(id, firstName, lastName, email string, encodings []string) (string, error) {
 	persons := m.getPersonsCollection()
 
 	upsert := true
@@ -59,7 +59,7 @@ func (m *PersonModel) Update(id, firstName, lastName, email string, rawEncodings
 				"firstName": firstName,
 				"lastName":  lastName,
 				"email":     email,
-				"encodings": rawEncodings},
+				"encodings": encodings},
 		},
 		&options.UpdateOptions{
 			Upsert: &upsert,
