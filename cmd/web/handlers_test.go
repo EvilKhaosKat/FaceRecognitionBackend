@@ -76,6 +76,47 @@ func TestGetPerson(t *testing.T) {
 		person.Email != mock.Person.Email {
 		t.Errorf("want body contains json with mock person, got %q", person)
 	}
+
+}
+func TestGetAllPerson(t *testing.T) {
+	//given
+	app := newTestApplication(t)
+
+	ts := httptest.NewServer(app.routes())
+	defer ts.Close()
+
+	r := newGetRequest(t, ts.URL+"/person/all", app.validAuthHeader)
+
+	//when
+	rs, err := ts.Client().Do(r)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	//then
+	if rs.StatusCode != http.StatusOK {
+		t.Errorf("want %d; got %d", http.StatusOK, rs.StatusCode)
+	}
+
+	var persons []*models.Person
+
+	err = json.NewDecoder(rs.Body).Decode(&persons)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(persons) == 0 {
+		t.Fatalf("persons must be provided, found none")
+	}
+
+	for _, person := range persons {
+		if person.ID != mock.Person.ID ||
+			person.FirstName != mock.Person.FirstName ||
+			person.LastName != mock.Person.LastName ||
+			person.Email != mock.Person.Email {
+			t.Errorf("want body contains json with mock person, got %q", person)
+		}
+	}
 }
 
 func TestGetEncodingStringByMlResponse(t *testing.T) {
