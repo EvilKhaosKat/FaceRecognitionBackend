@@ -10,7 +10,7 @@ Python service provides encoding information by photo.
 This backend service registers users,
 uses facenet model for calculating encodings,
 keeps these encodings,
-and provides an ability to compare encodings - to find user by photo taken in mobile app.
+and provides an ability to compare them - to find user by photo taken in mobile app.
 
 == Testing
 
