@@ -1,0 +1,17 @@
+= FaceRecognitionBackend
+
+Backend for a small 'Face Recognition project'.
+
+Basically it keeps information about 'users'
+and integrates with another python service with https://github.com/davidsandberg/facenet[facenet].
+
+Python service provides encoding information by photo.
+
+This backend service registers users,
+uses facenet model for calculating encodings,
+keeps these encodings,
+and provides an ability to compare encodings - to find user by photo taken in mobile app.
+
+== Testing
+
+`go test ./...`
