@@ -12,6 +12,8 @@ uses facenet model for calculating encodings,
 keeps these encodings,
 and provides an ability to compare them - to find user by photo taken in mobile app.
 
+Implementation relies on stdlib for the most of the things (except for mongodb driver).
+
 == Testing
 
 `go test ./...`
