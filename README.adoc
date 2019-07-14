@@ -16,4 +16,4 @@ Implementation relies on stdlib for the most of the things (except for mongodb d
 
 == Testing
 
-`go test ./...`
+`go test ./\...`
