@@ -11,10 +11,10 @@ var Person = &models.Person{
 	Encodings: []string{"1 2 3"},
 }
 
-type PersonsModel struct {
+type PersonModel struct {
 }
 
-func (*PersonsModel) Update(id, firstName, lastName, email string, encodings []string) (string, error) {
+func (*PersonModel) Update(id, firstName, lastName, email string, encodings []string) (string, error) {
 	switch id {
 	case "1":
 		Person.ID = id
@@ -29,7 +29,7 @@ func (*PersonsModel) Update(id, firstName, lastName, email string, encodings []s
 	}
 }
 
-func (*PersonsModel) Get(id string) (*models.Person, error) {
+func (*PersonModel) Get(id string) (*models.Person, error) {
 	switch id {
 	case "1":
 		return Person, nil
@@ -38,10 +38,10 @@ func (*PersonsModel) Get(id string) (*models.Person, error) {
 	}
 }
 
-func (*PersonsModel) Remove(id string) (int64, error) {
+func (*PersonModel) Remove(id string) (int64, error) {
 	return 0, nil
 }
 
-func (*PersonsModel) GetAll() ([]*models.Person, error) {
+func (*PersonModel) GetAll() ([]*models.Person, error) {
 	return []*models.Person{Person}, nil
 }

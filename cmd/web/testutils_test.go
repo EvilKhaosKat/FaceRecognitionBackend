@@ -13,12 +13,12 @@ const mockMlEndpoint = "localhost:4242/ml"
 const mockValidAuthHeader = "test"
 
 func newTestApplication(t *testing.T) *application {
-	personsModel := &mock.PersonsModel{}
+	PersonModel := &mock.PersonModel{}
 	return &application{
 		errorLog:           log.New(ioutil.Discard, "", 0),
 		infoLog:            log.New(ioutil.Discard, "", 0),
-		persons:            personsModel,
-		encodingComparator: services.NewEncodingComparator(personsModel),
+		persons:            PersonModel,
+		encodingComparator: services.NewEncodingComparator(PersonModel),
 		validAuthHeader:    mockValidAuthHeader,
 		mlEndpoint:         mockMlEndpoint,
 	}
