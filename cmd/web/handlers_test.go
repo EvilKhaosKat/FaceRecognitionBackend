@@ -28,7 +28,7 @@ func TestMockGetPerson(t *testing.T) {
 
 	//then
 	if rs.StatusCode != http.StatusOK {
-		t.Errorf("want %d; got %d", http.StatusOK, rs.StatusCode)
+		t.Fatalf("want %d; got %d", http.StatusOK, rs.StatusCode)
 	}
 
 	defer rs.Body.Close()
@@ -60,7 +60,7 @@ func TestGetPerson(t *testing.T) {
 
 	//then
 	if rs.StatusCode != http.StatusOK {
-		t.Errorf("want %d; got %d", http.StatusOK, rs.StatusCode)
+		t.Fatalf("want %d; got %d", http.StatusOK, rs.StatusCode)
 	}
 
 	var person *models.Person
