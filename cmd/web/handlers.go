@@ -35,6 +35,7 @@ func (app *application) mockGetPerson(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//TODO we don't generate id for db relying on input person - generate uuid req
 func (app *application) addPerson(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		w.Header().Set("Allow", "POST")
