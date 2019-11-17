@@ -45,13 +45,13 @@ func NewEncoding(encoding string) (Encoding, error) {
 	return Encoding(result), nil
 }
 
-//TODO should it be method for Encoding, or a helper method in package?
 //GetDist returns L2 (Euclidean) distance between to encodings/vectors
+//TODO should it be method for Encoding, or a helper method in package?
 func (e Encoding) GetDist(otherEncoding Encoding) (float64, error) {
 	result := 0.0
 
 	if len(e) != len(otherEncoding) {
-		return -1, errors.New(fmt.Sprintf("different encodings length: %d and %d", len(e), len(otherEncoding)))
+		return -1, fmt.Errorf("different encodings length: %d and %d", len(e), len(otherEncoding))
 	}
 
 	for i := 0; i < len(e); i++ {
